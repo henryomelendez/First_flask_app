@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Todo List</title>
+</head>
+<body>
+    <div class="container">
+
+        <div class="section1">
+            <h1>Todo List</h1>
+            <form action="/" method= "POST">
+            <p>
+                <label for="new-task">Add Tasks</label>
+                <input  type="text" id="task" name = "task">
+                <button onclick="addTask()" id="submit-task">Add</button>
+            </p>
+            </form>
+        </div>
+
+        <div class="section2">
+            <h3>To-do</h3>
+            
+            <ul id="incomplete-tasks">
+               
+                
+            </ul>
+        </div>
+        <div class="section3">
+            <h3>Complete Tasks</h3>
+            <ul id="completed-tasks">
+                <li>
+                    <input type="checkbox" checked="">
+                    <label >Learn Javascript</label>
+                    <input type="text">
+                    <button class="edit" onclick="editTask">Edit</button>
+                    <button class="delete" onclick="deleteTask">Delete</button>
+                </li>
+            </ul>
+        </div>
+        <div class="section4">
+            <button id="clear" onclick="clearAll()">
+                <p>Clear</p>
+            </button>
+        </div>
+        <div class="mode">
+            Dark mode:
+            <button class="change" id="m">OFF</button>
+        </div>
+
+
+
+    </div>
+    <script src="{{ url_for('static', filename='index.js') }}">
+        
+
+    </script>
+</body>
+</html>
