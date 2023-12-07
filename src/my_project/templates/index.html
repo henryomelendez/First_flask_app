@@ -15,7 +15,7 @@
             <p>
                 <label for="new-task">Add Tasks</label>
                 <input  type="text" id="task" name = "task">
-                <button onclick="addTask()" id="submit-task">Add</button>
+                <button  id="submit-task">Add</button>
             </p>
             </form>
         </div>
@@ -32,11 +32,11 @@
             <h3>Complete Tasks</h3>
             <ul id="completed-tasks">
                 <li>
-                    <input type="checkbox" checked="">
-                    <label >Learn Javascript</label>
-                    <input type="text">
-                    <button class="edit" onclick="editTask">Edit</button>
-                    <button class="delete" onclick="deleteTask">Delete</button>
+                    <input type="checkbox" id="task1" checked>
+                    <label for="task1">Learn Javascript</label>
+                    <input type="text" name="task1" value="">
+                    <button class="edit" onclick="editTask()">Edit</button>
+                    <button class="delete-button" onclick="deleteTask()">Delete</button>
                 </li>
             </ul>
         </div>
