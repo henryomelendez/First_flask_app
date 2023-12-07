@@ -1,44 +1,77 @@
-from flask import Flask
+from flask import Flask , g, url_for, redirect
 import mysql.connector
-from flask import render_template, request
+from flask import render_template, request, jsonify
 
-app = Flask(__name__, template_folder='templates')
-#config Database
-connection = mysql.connector.connect(
-        user = 'root',
-        password = '',
-        host='127.0.0.1',
-        port = 3306,
-        database = 'todo'
-)
-todo = {}
+def get_db():
+    if 'db' not in g:
+        g.db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="todo"
+        )
+    return g.db
 
-
-@app.route("/")
-def hello():
-    return render_template("index.html")
-
+@app.teardown_appcontext
+def close_db(e=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 @app.route('/', methods='GET')
 def index():
-    global todo
-    if request.method == 'GET':
-        todo = []
-        cursor = connection.cursor()
+    try:
+        db = get_db()
+        cursor = db.cursor()
         cursor.execute("SELECT * FROM todos")
-        data = cursor.fetchall()
-        for result in data:
-            item = {
-                "id": result[0],
-                "task": result[1],
-                "status": result[2]
-            }
-            todo.append(item)
-        cursor.close()
-        connection.close()
+        tasks = cursor.fetchall()
+        return jsonify(tasks), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 
-    return render_template('index.html', data=todo)
+
+@app.route('/update/<int:id>', methods=['POST'])
+def update_todo(id):
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        task = request.form['task']
+        status = request.form['status']
+        cursor.execute("UPDATE todos SET task = %s, status = %s WHERE id = %s", (task, status, id))
+        db.commit()
+        return jsonify({'task': task, 'status': status}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+
+@app.route('/add', methods=['POST'])
+def add_todo():
+    if request.method == 'POST':
+        try:
+            db = get_db()
+            cursor = db.cursor()
+            task = request.form['task']
+            status = '1' if request.form.get('status') else '0'
+            cursor.execute("INSERT INTO todos (task, status) VALUES (%s, %s)", (task, status))
+            db.commit()
+            return jsonify({'task': task, 'status': status}), 201
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+
+
+@app.route('/delete/<int:id>', methods=['POST'])
+def delete_todo(id):
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM todos WHERE id = %s", (id,))
+        db.commit()
+        return jsonify({'success': 'Task deleted'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
 
 
 app.run(debug=True)
