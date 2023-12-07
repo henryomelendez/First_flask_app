@@ -2,6 +2,9 @@ from flask import Flask , g, url_for, redirect
 import mysql.connector
 from flask import render_template, request, jsonify
 
+app = Flask(__name__)
+
+
 def get_db():
     if 'db' not in g:
         g.db = mysql.connector.connect(
@@ -17,9 +20,13 @@ def close_db(e=None):
     db = g.pop('db', None)
     if db is not None:
         db.close()
-
-@app.route('/', methods='GET')
+        
+@app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/tasks', methods=['GET'])
+def todos():
     try:
         db = get_db()
         cursor = db.cursor()

@@ -33,16 +33,46 @@
 */
 
 window.onload = function() {
-    fetch('/tasks')
+    fetch('/tasks', {
+        method: 'GET'
+    })
     .then(response => response.json())
     .then(tasks => {
         for (let i = 0; i < tasks.length; i++) {
             var li = document.createElement('li');
             li.setAttribute('data-id', tasks[i].id);
+            li.setAttribute('class', 'row');
             var label = document.createElement('label');
-            label.textContent = tasks[i].task;
+
+            let checkebox = document.createElement("input");
+            checkebox.setAttribute("type", "checkbox");
+            li.appendChild(checkebox);
+            let editButtom = document.createElement("button");
+            editButtom.innerText = "Edit";
+            editButtom.className = "edit";
+            
+    
+            let deleteButton = document.createElement("button");
+            deleteButton.innerText = "Delete";
+            deleteButton.className = "delete";
+
+            let html = `
+            <div class="item">${tasks[i][0]}</div>
+            <div class="item">${tasks[i][1]}</div>
+            <div class="item">${tasks[i][2]}</div> 
+            `;
+            let div = document.createElement('div');
+            div.innerHTML = html;
+            li.appendChild(div);
+    
+            li.appendChild(editButtom);
+            li.appendChild(deleteButton);
+
+
+
             li.appendChild(label);
-            if (tasks[i].status === '1') {
+            
+            if (tasks[i].status === 1) {
                 document.getElementById('completed-tasks').appendChild(li);
             } else {
                 document.getElementById('incomplete-tasks').appendChild(li);
@@ -70,6 +100,8 @@ document.getElementById('submit-task').addEventListener('click', function(e) {
         var li = document.createElement('li');
         var label = document.createElement('label');
         label.textContent = data.task;
+
+       
         li.appendChild(label);
         document.getElementById('incomplete-tasks').appendChild(li);
     });
@@ -166,8 +198,7 @@ function bindTaskEvents(taskListItem){
     let editButton = taskListItem.querySelector("button.edit");
     let deleteButton = taskListItem.querySelector("button.delete");
 
-    editButton.onclick = editTask;
-    editButton.onclick = deleteTask;
+    
 }
 
 let tasks = document.querySelectorAll("#incomplete-tasks li, #completed-tasks li");

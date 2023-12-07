@@ -90,3 +90,13 @@ input[type="type"]{
     color: black;
     
 }
+
+.row {
+    display: flex;
+    justify-content: space-around;
+}
+
+.item{
+    list-style: none;
+
+}
